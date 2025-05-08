@@ -1,0 +1,22 @@
+{
+  "name": "Michael Whitaker",
+  "organization": "Michael Whitaker",
+  "description": "Radar Chart",
+  "organizationUrl": "https://www.analyticsbuddy.com/",
+  "supportUrl": "https://www.analyticsbuddy.com/",
+  "privacyPolicyUrl": "https://www.analyticsbuddy.com/privacy-policy/",
+  "termsOfServiceUrl": "https://www.analyticsbuddy.com/terms-and-conditions/",
+  "devMode": true,
+  "components": [
+    {
+      "name": "radar-chart",
+      "description": "Radar Chart",
+      "iconUrl": "https://storage.googleapis.com/analytics_buddy_viz/radar-chart/radar-chart-icon.png",
+      "resource": {
+        "js": "gs://analytics_buddy_viz/radar-chart/index.js",
+        "config": "gs://analytics_buddy_viz/radar-chart/index.json",
+        "css": "gs://analytics_buddy_viz/radar-chart/index.css"
+      }
+    }
+  ]
+}
