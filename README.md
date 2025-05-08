@@ -2,8 +2,7 @@
 
 A Looker Studio community visualization component for Radar Charts. Adapted from (Observable)[https://observablehq.com/@observablehq/plot-radar-chart].
 
-Working demo: https://lookerstudio.google.com/reporting/9059e663-ccf5-4e5d-bc92-5d92cd71ebee
-
+Working demo: https://lookerstudio.google.com/reporting/830f64a2-39e4-4744-95ab-9e3f56d12642
 
 
 ## Features
@@ -43,8 +42,6 @@ npm run dev
 │   ├── index.css
 │   └── manifest.json
 ├── src/                 # Source code
-│   ├── config.template.js # Configuration template
-│   ├── config.js         # Your private config (git-ignored)
 │   ├── index.css
 │   ├── index.js          # Main visualization code
 │   ├── radar.js          # Radar chart implementation
@@ -138,7 +135,9 @@ Phone Model 2,0.6,0.9,0.7,0.8,0.4
 
 ## Configuration
 
-The visualization can be configured in Looker Studio to accept between 1 and 4 dimensions, with the first field being a date field.
+The visualization has a few customization options:
+
+![data/setup-community-viz.png](data/setup-community-viz.png)
 
 ## License
 
