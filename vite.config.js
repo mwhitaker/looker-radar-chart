@@ -153,10 +153,34 @@ export default defineConfig({
                   ]
                 },
                 {
+                  "id": "scaleType",
+                  "label": "Scale Type",
+                  "type": "SELECT_SINGLE",
+                  "defaultValue": "auto",
+                  "options": [
+                    {
+                      "label": "Auto-detect",
+                      "value": "auto"
+                    },
+                    {
+                      "label": "0-1 (Percentage)",
+                      "value": "percentage"
+                    },
+                    {
+                      "label": "1-5 (Rating)",
+                      "value": "rating"
+                    },
+                    {
+                      "label": "Custom",
+                      "value": "custom"
+                    }
+                  ]
+                },
+                {
                   "id": "tickStep",
-                  "label": "tick step",
+                  "label": "Tick Step",
                   "type": "TEXTINPUT",
-                  "defaultValue": "0.1"
+                  "defaultValue": "auto"
                 },
                 { // Add this new element
                   "id": "usePercentage",
@@ -176,9 +200,9 @@ export default defineConfig({
                 },
                 { // Add this new element
                   "id": "maxTickValue",
-                  "label": "max value for ticks, e.g. 0.6",
+                  "label": "Max Scale Value",
                   "type": "TEXTINPUT",
-                  "defaultValue": "1.0"
+                  "defaultValue": "auto"
                  
                 },
               ]

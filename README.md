@@ -126,16 +126,45 @@ Your CSV file should include:
 - A `name` column for each data series (e.g., "Phone Model 1")
 - Additional columns for each metric/axis (e.g., "Battery", "Camera", "Speed")
 
-Example:
+#### Data Format Tips
+
+**Values normalized between 0-1 for percentage display or any range for raw values:**
+
+- **0-1 Scale (Percentage):** Values between 0 and 1 are automatically detected and can be displayed as percentages
+- **1-5 Scale (Rating):** Values between 1 and 5 are automatically detected as rating scales
+- **Custom Scale:** Any other range can be used with manual configuration
+
+Example (0-1 scale):
 ```csv
 name,Battery,Camera,Speed,RAM,Storage
 Phone Model 1,0.8,0.7,0.6,0.9,0.5
 Phone Model 2,0.6,0.9,0.7,0.8,0.4
 ```
 
+Example (1-5 rating scale):
+```csv
+name,battery_life,performance,camera_quality,screen_quality,build_quality
+iPhone 14,4,5,5,5,5
+Samsung Galaxy S23,5,5,4,5,4
+Google Pixel 7,4,4,5,4,4
+```
+
 ## Configuration
 
-The visualization has a few customization options:
+The visualization supports several customization options:
+
+### Scale Configuration
+
+- **Scale Type:** Choose between "Auto-detect", "0-1 (Percentage)", "1-5 (Rating)", or "Custom"
+- **Tick Step:** Controls the increment between scale marks (set to "auto" for automatic detection)
+- **Max Scale Value:** Sets the maximum value for the scale (set to "auto" for automatic detection)
+- **Display Values as Percentages:** Toggle to show values as percentages or raw numbers
+
+### Visual Customization
+
+- **Line Type:** Choose between cardinal-closed, linear-closed, or basis-closed curves
+- **Label Font Size:** Adjust the size of axis labels
+- **Label Font Weight:** Set the weight of axis labels
 
 ![data/setup-community-viz.png](data/setup-community-viz.png)
 
