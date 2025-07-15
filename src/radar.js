@@ -18,7 +18,7 @@ function determineTickStep(maxValue) {
 }
 
 export function createRadarChart(dataset, options = {}) { // dataset here is the LONG format
-  const { width = 450, height = 450, lineType = "cardinal-closed", fontSize = "10", fontWeight = "normal", usePercentage = false } = options;
+  const { width = 450, height = 450, lineType = "cardinal-closed", fontSize = "10", fontWeight = "normal", usePercentage = false, scaleType = "auto" } = options;
 
   // If dataset is empty, return an empty chart
   if (!dataset || dataset.length === 0) {
@@ -37,28 +37,34 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
   console.log("Longitude domain (axis labels):", longitudeDomain);
   const longitude = d3.scalePoint(longitudeDomain, [180, -180]).padding(0.5).align(1);
 
-  // Find the maximum value in the dataset to potentially adjust the radial scale
+  // Find the maximum and minimum values in the dataset to potentially adjust the radial scale
   const maxValue = d3.max(dataset, d => d.value);
+  const minValue = d3.min(dataset, d => d.value);
   console.log("Maximum value in dataset:", maxValue);
+  console.log("Minimum value in dataset:", minValue);
 
   let scaleMax, finalTickStep, radiusAdjust;
 
-  // Decide scale based on usePercentage OR if max value looks fractional
-  if (usePercentage || maxValue <= 1.2) { // Treat as 0-1 scale for percentage display or if data looks fractional
-    finalTickStep = parseFloat(options.tickStep) || 0.1;
-    scaleMax = parseFloat(options.maxTickValue) || 1.0; // Target 1.0 (representing 100%)
-    radiusAdjust = scaleMax; // Projection radius matches 0-1 scale
+  // Decide scale based on scaleType option or auto-detection
+  if (scaleType === "percentage" || (scaleType === "auto" && (usePercentage || maxValue <= 1.2))) {
+    // 0-1 scale for percentage display or if data looks fractional
+    finalTickStep = (options.tickStep === "auto") ? 0.1 : parseFloat(options.tickStep) || 0.1;
+    scaleMax = (options.maxTickValue === "auto") ? 1.0 : parseFloat(options.maxTickValue) || 1.0;
+    radiusAdjust = scaleMax;
     console.log(`[RadarChart] Using PERCENTAGE/FRACTIONAL scale (0-1). TickStep=${finalTickStep}, ScaleMax=${scaleMax}, RadiusAdjust=${radiusAdjust}`);
-  } else { // Treat as raw value scale (likely integers)
-    const calculatedTickStep = determineTickStep(maxValue, usePercentage); // Pass usePercentage for context
-    console.log(`calculatedTickStep ${calculatedTickStep}`)
-    finalTickStep = parseFloat(options.tickStep) || calculatedTickStep;
-    console.log(`finalTickStep ${finalTickStep}`)
-    console.log(`options.tickStep ${options.tickStep}`)
-    console.log(`options.maxTickValue Boolean ${Boolean(options.maxTickValue)}`)
-    scaleMax = parseFloat(options.maxTickValue) || Math.max(finalTickStep, Math.ceil(maxValue / finalTickStep) * finalTickStep);
-    radiusAdjust = scaleMax; // Projection radius matches raw scale max
-    console.log(`[RadarChart] Using RAW VALUE scale (0-${scaleMax}). TickStep=${finalTickStep}, ScaleMax=${scaleMax}, RadiusAdjust=${radiusAdjust}`);
+  } else if (scaleType === "rating" || (scaleType === "auto" && maxValue <= 5 && minValue >= 1)) {
+    // 1-5 scale (like rating scales)
+    finalTickStep = (options.tickStep === "auto") ? 1 : parseFloat(options.tickStep) || 1;
+    scaleMax = (options.maxTickValue === "auto") ? 5 : parseFloat(options.maxTickValue) || 5;
+    radiusAdjust = scaleMax;
+    console.log(`[RadarChart] Using 1-5 RATING scale. TickStep=${finalTickStep}, ScaleMax=${scaleMax}, RadiusAdjust=${radiusAdjust}`);
+  } else {
+    // Raw value scale (likely integers) or custom scale
+    const calculatedTickStep = determineTickStep(maxValue);
+    finalTickStep = (options.tickStep === "auto") ? calculatedTickStep : parseFloat(options.tickStep) || calculatedTickStep;
+    scaleMax = (options.maxTickValue === "auto") ? Math.max(finalTickStep, Math.ceil(maxValue / finalTickStep) * finalTickStep) : parseFloat(options.maxTickValue) || Math.max(finalTickStep, Math.ceil(maxValue / finalTickStep) * finalTickStep);
+    radiusAdjust = scaleMax;
+    console.log(`[RadarChart] Using RAW VALUE/CUSTOM scale (0-${scaleMax}). TickStep=${finalTickStep}, ScaleMax=${scaleMax}, RadiusAdjust=${radiusAdjust}`);
   }
 
   // const calculatedTickStep = determineTickStep(maxValue);

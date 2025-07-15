@@ -298,7 +298,7 @@ function processDataset(transformedWideData) {
   const width = LOCAL ? 800 : getWidth();
   const height = LOCAL ? 800 : getHeight();
 
-  const usePercentageBoolean = chartStyle?.usePercentage?.value;
+  const usePercentageBoolean = chartStyle?.usePercentage?.value === "true";
   console.log(`[Index] Parsing usePercentage: Style value="${chartStyle?.usePercentage?.value}", Parsed Boolean=${usePercentageBoolean}`);
   
   // Pass simplified chart options
@@ -308,6 +308,7 @@ function processDataset(transformedWideData) {
     lineType: chartStyle?.lineType?.value,
     fontSize: chartStyle?.fontSize?.value || "10",
     fontWeight: chartStyle?.fontWeight?.value || "normal",
+    scaleType: chartStyle?.scaleType?.value || "auto",
     tickStep: chartStyle?.tickStep?.value,
     usePercentage: usePercentageBoolean,
     maxTickValue: chartStyle?.maxTickValue?.value,
@@ -375,17 +376,21 @@ function transformPhonesToLookerFormat(csvData) {
       value: "normal",
       defaultValue: "normal"
     },
+    scaleType: {
+      value: "auto",
+      defaultValue: "auto"
+    },
     tickStep: {
-      value: "0.1",
-      defaultValue: "0.1"
+      value: "auto",
+      defaultValue: "auto"
     },
     usePercentage: {
-      value: "true",
+      value: "false",
       defaultValue: "false"
     },
     maxTickValue: {
-      value: "0.6",
-      defaultValue: "1.0"
+      value: "auto",
+      defaultValue: "auto"
     }
   }
   
@@ -397,6 +402,7 @@ function renderVisualization(inputData) {
   if (LOCAL) {
     // Use the sample data paths from config or defaults
     const csvPaths = [
+      './data/ratings.csv',          // 1-5 scale test data
       './data/phones.csv',           // Relative to current directory
       '../data/phones.csv',          // One level up
       '/data/phones.csv',            // From root
