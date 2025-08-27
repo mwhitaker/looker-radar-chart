@@ -17,6 +17,7 @@
     },
     "devDependencies": {
         "@google/dscc": "^0.3.22",
+        "terser": "^5.43.1",
         "vite": "^5.2.0"
     },
     "dependencies": {

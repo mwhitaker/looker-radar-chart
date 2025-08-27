@@ -18,7 +18,34 @@ function determineTickStep(maxValue) {
 }
 
 export function createRadarChart(dataset, options = {}) { // dataset here is the LONG format
-  const { width = 450, height = 450, lineType = "cardinal-closed", fontSize = "10", fontWeight = "normal", usePercentage = false } = options;
+  const { 
+    width = 450, 
+    height = 450, 
+    lineType = "cardinal-closed", 
+    fontSize = "10", 
+    fontWeight = "normal", 
+    usePercentage = false, 
+    backgroundColor = "#ffffff", 
+    textColor = "#000000",
+    ringStrokeWidth = "0.5",
+    axisStrokeWidth = "1.5", 
+    textStrokeWidth = "2",
+    axisLabelStrokeWidth = "3",
+    pointRadius = "3",
+    hoverMaxRadius = "15",
+    ringFillOpacity = "0.3",
+    areaFillOpacity = "0.2", 
+    axisStrokeOpacity = "0.5",
+    marginTop = "15",
+    marginRight = "50",
+    marginBottom = "60",
+    marginLeft = "60",
+    colorScheme = "category10"
+  } = options;
+  
+  console.log("[DEBUG RADAR] Received options:", JSON.stringify(options, null, 2));
+  console.log("[DEBUG RADAR] Using backgroundColor:", backgroundColor);
+  console.log("[DEBUG RADAR] Using textColor:", textColor);
 
   // If dataset is empty, return an empty chart
   if (!dataset || dataset.length === 0) {
@@ -104,26 +131,30 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
     // Use dynamic width/height
     width: width,
     height: height,
-    // Add fixed margins (important for label visibility)
-    marginTop: 15,    // Reduced top margin (adjust as needed for legend height)
-    marginRight: 50,  // Keep or adjust side/bottom margins for labels
-    marginBottom: 60,
-    marginLeft: 60,
+    // Use configurable margins (important for label visibility)
+    marginTop: Number(marginTop),
+    marginRight: Number(marginRight),
+    marginBottom: Number(marginBottom),
+    marginLeft: Number(marginLeft),
+    // Apply background color to the plot
+    style: {
+      backgroundColor: backgroundColor
+    },
     // Adjust projection domain radius slightly if needed, or keep fixed
     projection: {
       type: "azimuthal-equidistant",
       rotate: [0, -90],
       domain: d3.geoCircle().center([0, 90]).radius(radiusAdjust)()
     },
-    color: { legend: true, domain: Array.from(new Set(Plot.valueof(dataset, groupingKey))) }, // Use dynamic grouping key for color domain
+    color: { legend: true, scheme: colorScheme, domain: Array.from(new Set(Plot.valueof(dataset, groupingKey))) }, // Use dynamic grouping key and configurable color scheme
     marks: [
-      // grey discs (using fixed values 0.1 to 0.5)
+      // grey discs (using configurable values)
       Plot.geo(ringValues, {
         geometry: (r) => d3.geoCircle().center([0, 90]).radius(r)(),
         stroke: "#ccc",
         fill: "#eee",
-        fillOpacity: 0.3,
-        strokeWidth: 0.5
+        fillOpacity: Number(ringFillOpacity),
+        strokeWidth: Number(ringStrokeWidth)
       }),
 
       // white axes lines
@@ -133,8 +164,8 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
         x2: 0,
         y2: 90,
         stroke: "white",
-        strokeOpacity: 0.5,
-        strokeWidth: 1.5
+        strokeOpacity: Number(axisStrokeOpacity),
+        strokeWidth: Number(axisStrokeWidth)
       }),
 
       // tick labels (adjust position based on radiusAdjust)
@@ -144,9 +175,9 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
         dx: 4,
         textAnchor: "start",
         text: (d) => usePercentage ? `${Math.round(d * 100)}%` : d.toFixed(0),
-        fill: "#666",
-        stroke: "white",
-        strokeWidth: 2,
+        fill: textColor, // Use configurable text color
+        stroke: backgroundColor, // Use configurable background color for contrast
+        strokeWidth: Number(textStrokeWidth),
         fontSize: Number(fontSize) - 1, // Slightly smaller than main labels
         fontWeight: fontWeight
       }),
@@ -156,9 +187,9 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
         x: longitude,
         y: 90 - (radiusAdjust - 0.02), // Adjust based on radiusAdjust
         text: Plot.identity,
-        fill: "var(--theme-foreground, black)", // Use CSS vars
-        stroke: "var(--theme-background, white)",
-        strokeWidth: 3, // Ensure readability
+        fill: textColor, // Use configurable text color
+        stroke: backgroundColor, // Use configurable background color for contrast
+        strokeWidth: Number(axisLabelStrokeWidth), // Use configurable stroke width
         lineWidth: 10, // Plot option for text wrapping, might not be needed here
         fontSize: Number(fontSize), // Use the configurable font size
         fontWeight: fontWeight // Use the configurable font weight
@@ -172,7 +203,7 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
         y2: 90,
         fill: groupingKey,
         stroke: groupingKey,
-        fillOpacity: 0.2,
+        fillOpacity: Number(areaFillOpacity),
         curve: lineType,
         sort: {
           x: "key",
@@ -187,7 +218,7 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
         y: ({ value }) => 90 - value,
         fill: groupingKey,
         stroke: "white",
-        r: 3
+        r: Number(pointRadius)
       }),
 
       // interactive labels
@@ -200,10 +231,10 @@ export function createRadarChart(dataset, options = {}) { // dataset here is the
           textAnchor: "start",
           dx: 6,
           dy: -4,
-          fill: "black",
-          stroke: "white",
-          strokeWidth: 2,
-          maxRadius: 15,
+          fill: textColor, // Use configurable text color
+          stroke: backgroundColor, // Use configurable background color for contrast
+          strokeWidth: Number(textStrokeWidth),
+          maxRadius: Number(hoverMaxRadius),
           fontSize: Number(fontSize) + 1, // Slightly bigger than main labels for better visibility
           fontWeight: fontWeight === "normal" ? "bold" : fontWeight // Make hover labels bold if normal weight is selected
         })

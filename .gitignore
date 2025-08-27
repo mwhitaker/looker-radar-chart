@@ -35,3 +35,4 @@ upload_to_gcp.sh
 .gcp-credentials.json
 **/creds/**
 **/*.env
+public/manifest_dev.json

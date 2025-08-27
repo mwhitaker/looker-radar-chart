@@ -235,6 +235,43 @@ function processDataset(transformedWideData) {
     return chartStyle?.title?.value || "";
  };
 
+  // Function to extract color value from various possible Looker Studio formats
+  function extractColorValue(colorConfig, defaultValue) {
+    if (!colorConfig) return defaultValue;
+    
+    console.log("[DEBUG] Extracting color from config:", JSON.stringify(colorConfig, null, 2));
+    
+    // Try different possible structures that Looker Studio might use
+    const possiblePaths = [
+      colorConfig?.value?.color,        // Looker Studio structure: {value: {color: "#123456"}}
+      colorConfig?.color?.value,        // Alternative structure: {color: {value: "#123456"}}
+      colorConfig?.value,               // Direct value
+      colorConfig?.color,               // Color as direct property
+      colorConfig,                      // Direct color string
+    ];
+    
+    for (const path of possiblePaths) {
+      if (path && typeof path === 'string' && path.startsWith('#')) {
+        console.log("[DEBUG] Found color value:", path);
+        return path;
+      }
+    }
+    
+    console.log("[DEBUG] No valid color found, using default:", defaultValue);
+    return defaultValue;
+  }
+  
+  // Get background and text colors from chartStyle
+  console.log("[DEBUG] Full chartStyle object:", JSON.stringify(chartStyle, null, 2));
+  console.log("[DEBUG] fillColor object:", chartStyle?.fillColor);
+  console.log("[DEBUG] fontColor object:", chartStyle?.fontColor);
+  
+  const backgroundColor = extractColorValue(chartStyle?.fillColor, "#ffffff");
+  const textColor = extractColorValue(chartStyle?.fontColor, "#000000");
+  
+  console.log("[DEBUG] Final backgroundColor:", backgroundColor);
+  console.log("[DEBUG] Final textColor:", textColor);
+
   // Create main container with styling
   const main = html`
   <style>
@@ -244,6 +281,8 @@ function processDataset(transformedWideData) {
       width: 100%;
       height: 100%;
       overflow: hidden;
+      background-color: ${backgroundColor};
+      color: ${textColor};
     }
     
     .radar-container {
@@ -254,6 +293,8 @@ function processDataset(transformedWideData) {
       height: 100%;
       min-height: 500px;
       padding: 0.2rem 1rem 1rem 1rem;
+      background-color: ${backgroundColor};
+      color: ${textColor};
     }
     
     .radar-title {
@@ -261,6 +302,7 @@ function processDataset(transformedWideData) {
       font-weight: bold;
       margin-bottom: 0.5rem;
       text-align: center;
+      color: ${textColor};
     }
     
     .radar-chart {
@@ -269,11 +311,28 @@ function processDataset(transformedWideData) {
       display: flex;
       justify-content: center;
       align-items: center;
+      background-color: ${backgroundColor};
     }
     
     /* Critical for label visibility */
     .radar-chart svg {
       overflow: visible !important;
+    }
+    
+    /* Apply background color to all Plot.js elements */
+    [class*="plot-"],
+    [class*="plot-"] *,
+    .plot-d6a7b5-figure,
+    .plot-d6a7b5-swatches,
+    .plot-d6a7b5-swatches-wrap,
+    .plot-d6a7b5-swatch {
+      background-color: ${backgroundColor} !important;
+      color: ${textColor} !important;
+    }
+    
+    /* Ensure the main SVG container uses the background color */
+    svg.plot-d6a7b5 {
+      background-color: ${backgroundColor} !important;
     }
     
     @media (min-width: 768px) {
@@ -301,7 +360,7 @@ function processDataset(transformedWideData) {
   const usePercentageBoolean = chartStyle?.usePercentage?.value;
   console.log(`[Index] Parsing usePercentage: Style value="${chartStyle?.usePercentage?.value}", Parsed Boolean=${usePercentageBoolean}`);
   
-  // Pass simplified chart options
+  // Pass all chart options including the new configuration values
   const chartOptions = {
     width: Math.min(width, height),
     height: Math.min(width, height),
@@ -311,7 +370,30 @@ function processDataset(transformedWideData) {
     tickStep: chartStyle?.tickStep?.value,
     usePercentage: usePercentageBoolean,
     maxTickValue: chartStyle?.maxTickValue?.value,
+    backgroundColor: backgroundColor,
+    textColor: textColor,
+    // New configuration options for stroke widths
+    ringStrokeWidth: chartStyle?.ringStrokeWidth?.value || "0.5",
+    axisStrokeWidth: chartStyle?.axisStrokeWidth?.value || "1.5",
+    textStrokeWidth: chartStyle?.textStrokeWidth?.value || "2",
+    axisLabelStrokeWidth: chartStyle?.axisLabelStrokeWidth?.value || "3",
+    // New configuration options for sizes
+    pointRadius: chartStyle?.pointRadius?.value || "3",
+    hoverMaxRadius: chartStyle?.hoverMaxRadius?.value || "15",
+    // New configuration options for opacity
+    ringFillOpacity: chartStyle?.ringFillOpacity?.value || "0.3",
+    areaFillOpacity: chartStyle?.areaFillOpacity?.value || "0.2",
+    axisStrokeOpacity: chartStyle?.axisStrokeOpacity?.value || "0.5",
+    // New configuration options for margins
+    marginTop: chartStyle?.marginTop?.value || "15",
+    marginRight: chartStyle?.marginRight?.value || "50",
+    marginBottom: chartStyle?.marginBottom?.value || "60",
+    marginLeft: chartStyle?.marginLeft?.value || "60",
+    // Color scheme configuration
+    colorScheme: chartStyle?.colorScheme?.value || "category10",
   };
+  
+  console.log("[DEBUG] Chart options passed to radar:", JSON.stringify(chartOptions, null, 2));
   
   // Create the chart and initialize it with our container
   const chart = createRadarChart(longDataset, chartOptions);
@@ -386,6 +468,73 @@ function transformPhonesToLookerFormat(csvData) {
     maxTickValue: {
       value: "0.6",
       defaultValue: "1.0"
+    },
+    fillColor: {
+      color: {
+        value: "#ffffff"
+      }
+    },
+    fontColor: {
+      color: {
+        value: "#000000"
+      }
+    },
+    // Add new configuration options for local development testing
+    ringStrokeWidth: {
+      value: "0.5",
+      defaultValue: "0.5"
+    },
+    axisStrokeWidth: {
+      value: "1.5", 
+      defaultValue: "1.5"
+    },
+    textStrokeWidth: {
+      value: "2",
+      defaultValue: "2"
+    },
+    axisLabelStrokeWidth: {
+      value: "3",
+      defaultValue: "3"
+    },
+    pointRadius: {
+      value: "3",
+      defaultValue: "3"
+    },
+    hoverMaxRadius: {
+      value: "15",
+      defaultValue: "15"
+    },
+    ringFillOpacity: {
+      value: "0.3",
+      defaultValue: "0.3"
+    },
+    areaFillOpacity: {
+      value: "0.2",
+      defaultValue: "0.2"
+    },
+    axisStrokeOpacity: {
+      value: "0.5",
+      defaultValue: "0.5"
+    },
+    marginTop: {
+      value: "15",
+      defaultValue: "15"
+    },
+    marginRight: {
+      value: "50",
+      defaultValue: "50"
+    },
+    marginBottom: {
+      value: "60",
+      defaultValue: "60"
+    },
+    marginLeft: {
+      value: "60",
+      defaultValue: "60"
+    },
+    colorScheme: {
+      value: "category10",
+      defaultValue: "category10"
     }
   }
   

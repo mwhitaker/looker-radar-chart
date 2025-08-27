@@ -137,7 +137,7 @@ Phone Model 2,0.6,0.9,0.7,0.8,0.4
 
 The visualization has a few customization options:
 
-![data/setup-community-viz.png](data/setup-community-viz.png)
+![Style Options](data/configs.png)
 
 ## License
 
