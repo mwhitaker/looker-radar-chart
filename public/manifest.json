@@ -2,15 +2,16 @@
   "name": "Michael Whitaker",
   "organization": "Michael Whitaker",
   "description": "Radar Chart",
-  "organizationUrl": "https://www.analyticsbuddy.com/",
-  "supportUrl": "https://www.analyticsbuddy.com/",
-  "privacyPolicyUrl": "https://www.analyticsbuddy.com/privacy-policy/",
-  "termsOfServiceUrl": "https://www.analyticsbuddy.com/terms-and-conditions/",
-  "devMode": true,
+  "organizationUrl": "https://www.michaelwhitaker.com/",
+  "supportUrl": "https://www.michaelwhitaker.com/posts/2025-05-13-looker-radar-chart/",
+  "privacyPolicyUrl": "https://www.michaelwhitaker.com/privacy-policy/",
+  "termsOfServiceUrl": "https://www.michaelwhitaker.com/terms-of-service/",
+  "devMode": false,
   "components": [
     {
-      "name": "radar-chart",
-      "description": "Radar Chart",
+      "id": "radar-chart",
+      "name": "Radar Chart",
+      "description": "A modern Radar Chart visualization based on Observable Plot",
       "iconUrl": "https://storage.googleapis.com/analytics_buddy_viz/radar-chart/radar-chart-icon.png",
       "resource": {
         "js": "gs://analytics_buddy_viz/radar-chart/index.js",
